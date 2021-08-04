@@ -53,6 +53,20 @@ def initial_write_to_csv(list_unprotected_articles, filepath):
 
     print("Writing has been completed!")
 
+def get_ec_titles(number_of_articles, total_articles_in_file):
+
+    print("Trying to fetch", number_of_articles, " articles...")
+
+    list_article_indices = random.sample(range(1, total_articles_in_file), number_of_articles)
+
+    with open('parsed/concatenated-extendedconfirmed.csv', encoding="utf-8") as fd:
+        reader=csv.reader(fd)
+        interesting_rows=[row for idx, row in enumerate(reader) if idx in list_article_indices]
+    
+    print(len(interesting_rows), " titles have been picked!" )
+
+    return interesting_rows
+
 def add_sysop_titles(list_sysop_articles , filepath):
         print("Writing to file....")
 
@@ -72,6 +86,24 @@ def add_sysop_titles(list_sysop_articles , filepath):
             #Write to CSV
             writer.writerow(row) 
 
+def add_ec_titles(list_sysop_articles , filepath):
+        print("Writing to file....")
+
+        # open the file in the append mode
+        f = open(filepath, 'a', encoding='utf-8', newline='')    
+
+        writer = csv.writer(f)
+
+        for article in list_sysop_articles:
+            #Set page title and ID
+            page_title =  article[0]
+            #view_count = article [3]
+            protection_status = article[1]
+
+            row = [page_title, protection_status]
+            
+            #Write to CSV
+            writer.writerow(row) 
 
 def main():
     #Get 200 odd articles of each type
@@ -83,11 +115,18 @@ def main():
     # initial_write_to_csv(list_unprotected_articles, "dataset/balanced_dataset2.csv")
 
     #2. Get 52 sysop articles
-    number_of_articles = 52
-    last_row_in_file = 168
-    list_sysop_articles = get_sysop_titles(number_of_articles, last_row_in_file)
+    # number_of_articles = 52
+    # last_row_in_file = 168
+    # list_sysop_articles = get_sysop_titles(number_of_articles, last_row_in_file)
 
-    add_sysop_titles(list_sysop_articles, "dataset/balanced_dataset2.csv")
+    # add_sysop_titles(list_sysop_articles, "dataset/balanced_dataset2.csv")
+
+    #2. Get 55 extendedconfirmed articles from parsed/concatenated-extendedconfirmed
+    number_of_articles = 55
+    last_row_in_file = 108
+    list_ec_articles = get_ec_titles(number_of_articles, last_row_in_file)
+
+    add_ec_titles(list_ec_articles, "dataset/balanced_dataset2.csv")
 
 if __name__ == "__main__":
     main()

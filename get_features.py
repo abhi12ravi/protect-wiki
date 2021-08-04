@@ -120,7 +120,7 @@ def fetch_details_from_info_page(title):
 def main():
     filepath = "dataset/balanced_dataset2.csv"
     #Fetch edit count and write to CSV
-    df = pd.read_csv(filepath, skiprows=range(1, 219))
+    df = pd.read_csv(filepath, skiprows=range(1, 643))
 
     # df = pd.read_csv(filepath)
     titles = df['page_title']
@@ -143,13 +143,15 @@ def main():
         df.loc[index,'recent_number_of_edits'] = features_dict['recent_number_of_edits']
         df.loc[index,'number_distinct_authors'] = features_dict['number_distinct_authors']
         df.loc[index,'number_categories'] = features_dict['number_categories']
-
-        # writing into the file
-        df.to_csv(filepath, mode='a', index=False)
-
+        
+        counter +=1
         print("~~ ", counter, "files completed successfully! ~~ Remaining articles = ", len(titles) - counter)
 
-        counter +=1
+    # writing into the file
+    try:
+        df.to_csv(filepath, mode='a', index=False)
+    except PermissionError:
+        df.to_csv("dataset/new.csv", mode='a', index=False)
 
 if __name__ == "__main__":
     main()
